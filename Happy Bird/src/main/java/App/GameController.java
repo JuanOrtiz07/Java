@@ -1,12 +1,16 @@
 package App;
 
+import States.GameState;
+import States.MenuState;
 import colision.Colisiones;
 import Config.GameConfig;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import model.Bird;
 import model.Obstaculo;
+import States.MenuState;
 
 import java.util.ArrayList;
 
@@ -16,36 +20,44 @@ public class GameController {
     private final double altoVentana = GameConfig.ALTO_VENTANA;
 
     private final double anchoVentana = GameConfig.ANCHO_VENTANA;
-    // Dificultad
-    private double velocidadTuberias = GameConfig.VELOCIDAD_INICIAL_TUBERIAS;
-
-    // Entidades
-    private Bird bird;
-    private ArrayList<Obstaculo> obstaculos;
 
     // Renderizado
     private Canvas canvas;
     private GraphicsContext gc;
 
-    // Tiempo
-    private long tiempoInicio = System.currentTimeMillis();
+    private Bird bird;
+    private ArrayList<Obstaculo> obstaculos;
 
     // Estado
-    private boolean gameOver = false;
+    private GameState estadoActual;
 
     public GameController() {
+
+        obstaculos = new ArrayList<>();
+        obstaculos.add(new Obstaculo());
+
+        bird = new Bird();
+
 
         canvas = new Canvas(
                 anchoVentana,
                 altoVentana
         );
+        estadoActual = new MenuState(this);
 
         gc = canvas.getGraphicsContext2D();
 
-        bird = new Bird();
+    }
+    public Bird getBird(){
+        return bird;
+    }
 
-        obstaculos = new ArrayList<>();
-        obstaculos.add(new Obstaculo());
+    public ArrayList<Obstaculo> getObstaculos() {
+        return obstaculos;
+    }
+
+    public GraphicsContext getGraphicsContext() {
+        return gc;
     }
 
     public Canvas getCanvas() {
@@ -57,6 +69,10 @@ public class GameController {
     }
 
     public void render() {
+        estadoActual.render();
+    }
+
+    public void renderEscenario() {
 
         gc.clearRect(
                 0,
@@ -69,7 +85,7 @@ public class GameController {
         gc.setFill(Color.SKYBLUE);
         gc.fillRect(
                 0,
-                GameConfig.POSICION_SUELO,
+                0,
                 anchoVentana,
                 altoVentana
         );
@@ -91,68 +107,24 @@ public class GameController {
         // Pájaro
         bird.render(gc);
     }
-
     public void update() {
-
-        if (gameOver) {
-            return;
-        }
-
-        bird.update();
-
-        moverTuberias();
-
-        generarTuberias();
-
-        eliminarTuberias();
-
-        verificarColisiones();
+        estadoActual.update();
     }
-    private void moverTuberias() {
-        long segundos = (System.currentTimeMillis() - tiempoInicio) / 1000;
-        velocidadTuberias = Math.min(
-                GameConfig.VELOCIDAD_MAXIMA_TUBERIAS,
-                GameConfig.VELOCIDAD_INICIAL_TUBERIAS + segundos / 20.0
-        );
-        for (Obstaculo o : obstaculos) {
-            o.update(velocidadTuberias);
-        }
+
+    public void reiniciarEntidades() {
+
+        bird = new Bird();
+
+        obstaculos.clear();
+
+        obstaculos.add(new Obstaculo());
     }
-    private void generarTuberias() {
 
-        if (obstaculos.isEmpty()) {
-            obstaculos.add(new Obstaculo());
-            return;
-        }
-
-        long segundos =
-                (System.currentTimeMillis() - tiempoInicio) / 1000;
-
-        double distanciaEntreTuberias =
-                Math.max(GameConfig.DISTANCIA_MINIMA_TUBERIAS,
-                        GameConfig.DISTANCIA_INICIAL_TUBERIAS - segundos * 2
-                );
-
-        Obstaculo ultima = obstaculos.get(obstaculos.size() - 1);
-        if (ultima.getPosX() < anchoVentana - distanciaEntreTuberias) {
-            obstaculos.add(new Obstaculo());
-        }
+    public void cambiarEstadoActual(GameState nuevoEstado) {
+        this.estadoActual = nuevoEstado;
     }
-    private void eliminarTuberias() {
-        for (int i = 0; i < obstaculos.size(); i++) {
-            Obstaculo o = obstaculos.get(i);
-            if (o.getPosX() + o.getAnchoTuberia() < 0) {
-                obstaculos.remove(i);
-                i--;
-            }
-        }
-    }
-    private void verificarColisiones() {
-        for (Obstaculo o : obstaculos) {
-            if (Colisiones.colisionPajaroObstaculo(bird, o)) {
-                gameOver = true;
-                break;
-            }
-        }
+
+    public void procesarTecla(KeyCode tecla) {
+        estadoActual.procesarTecla(tecla);
     }
 }

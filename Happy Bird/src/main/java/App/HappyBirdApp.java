@@ -23,7 +23,7 @@
             primaryStage.setScene(scene);
             primaryStage.show();
 
-            root.requestFocus();
+            controller.getCanvas().requestFocus();
             AnimationTimer gameLoop = new AnimationTimer() {
                 @Override
                 public void handle(long now) {
@@ -33,9 +33,7 @@
             };
             gameLoop.start();
             scene.setOnKeyPressed(event -> {
-                if (event.getCode() == KeyCode.SPACE) {
-                    controller.jump();
-                }
+                controller.procesarTecla(event.getCode());
             });
         }
     }
