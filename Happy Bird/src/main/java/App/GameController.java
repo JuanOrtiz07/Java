@@ -17,9 +17,8 @@ import java.util.ArrayList;
 public class GameController {
 
     // Dimensiones
-    private final double altoVentana = GameConfig.ALTO_VENTANA;
-
-    private final double anchoVentana = GameConfig.ANCHO_VENTANA;
+    private double anchoVentana;
+    private double altoVentana;
 
     // Renderizado
     private Canvas canvas;
@@ -35,18 +34,22 @@ public class GameController {
 
         obstaculos = new ArrayList<>();
         obstaculos.add(new Obstaculo());
-
         bird = new Bird();
+        anchoVentana = GameConfig.ANCHO_VENTANA;
+        altoVentana = GameConfig.ALTO_VENTANA;
+        canvas = new Canvas(anchoVentana, altoVentana);
 
-
-        canvas = new Canvas(
-                anchoVentana,
-                altoVentana
-        );
         estadoActual = new MenuState(this);
 
         gc = canvas.getGraphicsContext2D();
 
+    }
+    public double getAnchoVentana() {
+        return anchoVentana;
+    }
+
+    public double getAltoVentana() {
+        return altoVentana;
     }
     public Bird getBird(){
         return bird;
@@ -126,5 +129,13 @@ public class GameController {
 
     public void procesarTecla(KeyCode tecla) {
         estadoActual.procesarTecla(tecla);
+    }
+
+    public void actualizarTamanoVentana(double ancho, double alto) {
+        this.anchoVentana = ancho;
+        this.altoVentana = alto;
+
+        canvas.setWidth(ancho);
+        canvas.setHeight(alto);
     }
 }

@@ -18,6 +18,9 @@
             controller.render();
 
             Scene scene = new Scene(root, 800, 600);
+            scene.widthProperty().addListener((obs, oldVal, newVal) -> {
+                controller.actualizarTamanoVentana(newVal.doubleValue(),scene.getHeight());
+            });
 
             primaryStage.setTitle("Happy Bird");
             primaryStage.setScene(scene);
