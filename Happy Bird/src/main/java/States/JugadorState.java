@@ -20,6 +20,10 @@ public class JugadorState implements GameState {
         this.controller = controller;
 
     }
+
+    @Override
+    public void procesarClick(double mouseX, double mouseY) {
+    }
     @Override
     public void update() {
 

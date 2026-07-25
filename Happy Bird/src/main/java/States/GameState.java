@@ -7,4 +7,5 @@ public interface GameState {
     void render();
 
     void procesarTecla(KeyCode tecla);
+    void procesarClick(double mouseX, double mouseY);
 }

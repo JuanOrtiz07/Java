@@ -138,4 +138,7 @@ public class GameController {
         canvas.setWidth(ancho);
         canvas.setHeight(alto);
     }
+    public void procesarClick(double mouseX, double mouseY) {
+        estadoActual.procesarClick(mouseX, mouseY);
+    }
 }

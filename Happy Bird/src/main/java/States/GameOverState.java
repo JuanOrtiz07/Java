@@ -28,5 +28,7 @@ public class GameOverState implements GameState {
             controller.cambiarEstadoActual(new MenuState(controller));
         }
     }
+    @Override
+    public void procesarClick(double mouseX, double mouseY){}
 
 }

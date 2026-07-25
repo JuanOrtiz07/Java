@@ -38,5 +38,12 @@
             scene.setOnKeyPressed(event -> {
                 controller.procesarTecla(event.getCode());
             });
+
+            scene.setOnMouseClicked(event -> {
+                controller.procesarClick(
+                        event.getX(),
+                        event.getY()
+                );
+            });
         }
     }
